@@ -1,70 +1,94 @@
-ActionRecorder (fork)
+ActionRecorder (Fork)
 
-ActionRecorder is a Blender add-on that lets you record, edit and replay sequences of operators as reusable actions (macros).
-It is designed to speed up repetitive workflows by turning complex click-sequences into one-click tools.
+ActionRecorder is a Blender add-on that allows you to record, edit, and replay sequences of operators as reusable actions (macros).
+It speeds up repetitive workflows by turning long chains of clicks into one-click tools.
 
 This repository is an unofficial fork of the original add-on by InamuraJIN and RivinHD.
-All credits for the original idea, design and implementation belong to them.
-This fork only contains small functional tweaks and minor fixes on top of their work.
+All credits for the concept, design, and core implementation belong to them.
+This fork introduces small functional tweaks, minor fixes, and maintains full compatibility with the original codebase.
 
-Key features
+✨ Key Features
+📌 Record Actions (Macros)
 
-📌 Record actions (macros)
-Capture sequences of Blender operators with their settings and store them as named actions.
+Capture sequences of Blender operators including all parameters, and save them as named reusable actions.
 
-🧩 Local & Global libraries
+🧩 Local & Global Libraries
 
-Local actions stored inside the current .blend file.
+Local actions — stored inside the current .blend file.
 
-Global actions available across all projects.
+Global actions — accessible from any project.
 
-🗂️ Categories and flexible organization
-Group actions into categories, reorder them, move actions between categories and switch quickly between setups.
+🗂️ Categories & Organization
 
-🎯 Playback and execution options
+Group actions into categories
 
-Run a full action with one click.
+Reorder actions
 
-Execute individual macros inside an action.
+Move actions between categories
 
-Control how properties are replayed and how values are restored.
+Quickly switch between different setups
 
-⌨️ Keymap integration & menus
+🎯 Playback & Execution Options
 
-Add shortcuts for your favorite actions.
+Run an entire action with one click
 
-Access actions from 3D View menus and pie menus.
+Execute individual steps inside an action
 
-Optional “Copy to ActionRecorder” entry in the right-click context menu for quickly capturing settings.
+Control property replay logic and value restoration behavior
 
-📤📥 Import / export
+⌨️ Keymap & Menu Integration
 
-Export global actions to a file.
+Assign shortcuts to your favorite actions
 
-Import actions on another machine or share them with the team.
+Access actions from 3D View menus and pie menus
 
-🧱 Support for complex properties
-Proper handling of vectors, matrices, colors and other non-trivial Blender properties when recording and replaying macros.
+Optional: add “Copy to ActionRecorder” to the right-click context menu
 
-Blender compatibility
+📤📥 Import / Export
 
-The original add-on targets Blender 3.3.x (as specified in bl_info).
-This fork keeps the same codebase with only minimal adjustments to the functionality and behavior.
+Export global actions to a file
 
-About this fork
+Import actions on another machine or share with your team
 
-This repository:
+🧱 Advanced Property Support
 
-keeps the original structure and logic of ActionRecorder;
+Handles complex Blender properties correctly:
 
-applies only small functional changes and minor improvements (bugfixes / behavior tweaks);
+vectors
 
-aims to stay as close as possible to upstream, so that updating or comparing with the original project remains straightforward.
+matrices
 
-For detailed differences, please refer to the commit history of this repository.
+colors
 
-Credits
+and other non-trivial types
 
-Original add-on authors: InamuraJIN, RivinHD
+🧩 Blender Compatibility
 
-Fork maintainer: gh0stck
+The original add-on targets Blender 3.3.x (as indicated in bl_info).
+This fork keeps the same architecture with only minor adjustments and functional polishing.
+
+🔧 About This Fork
+
+This fork:
+
+preserves the original structure and logic of ActionRecorder
+
+applies small functional changes and minor improvements
+
+stays close to upstream to simplify future merging or comparison
+
+introduces no major redesigns or architecture changes
+
+For specifics, see the commit history.
+
+🙌 Credits
+
+Original Authors:
+
+InamuraJIN
+
+RivinHD
+
+Fork Maintainer:
+
+gh0stck
