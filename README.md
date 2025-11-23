@@ -1,94 +1,80 @@
-ActionRecorder (Fork)
+# ActionRecorder (Fork)
 
-ActionRecorder is a Blender add-on that allows you to record, edit, and replay sequences of operators as reusable actions (macros).
-It speeds up repetitive workflows by turning long chains of clicks into one-click tools.
+**ActionRecorder** is a Blender add-on that allows you to **record**, **edit**, and **replay** sequences of operators as reusable **actions (macros)**.  
+It helps automate repetitive workflows by turning complex multi-click operations into **single-button actions**.
 
-This repository is an unofficial fork of the original add-on by InamuraJIN and RivinHD.
-All credits for the concept, design, and core implementation belong to them.
-This fork introduces small functional tweaks, minor fixes, and maintains full compatibility with the original codebase.
+This repository is an **unofficial fork** of the original add-on by **InamuraJIN** and **RivinHD**.  
+All credits for the concept, design, and core implementation belong to them.  
+This fork includes **small functional tweaks**, **minor improvements**, and several **behavior fixes**, while maintaining full compatibility with the original project.
 
-✨ Key Features
-📌 Record Actions (Macros)
+---
 
-Capture sequences of Blender operators including all parameters, and save them as named reusable actions.
+## ✨ Key Features
 
-🧩 Local & Global Libraries
+### 📌 Record Actions (Macros)
+Capture sequences of Blender operators (including settings) and save them as named actions.
 
-Local actions — stored inside the current .blend file.
+### 🧩 Local & Global Libraries
+- **Local actions** — stored inside the `.blend` file  
+- **Global actions** — shared across all Blender projects  
 
-Global actions — accessible from any project.
+### 🗂️ Categories & Organization
+- Group actions into categories  
+- Reorder actions  
+- Move actions between categories  
+- Quickly switch setups  
 
-🗂️ Categories & Organization
+### 🎯 Playback & Execution Options
+- Run the entire action with a single click  
+- Execute individual steps  
+- Control property replay mode  
+- Configure how values reset or persist  
 
-Group actions into categories
+### ⌨️ Keymap & Menu Integration
+- Add hotkeys for actions  
+- Access actions from 3D View menus and pie menus  
+- Optional: “Copy to ActionRecorder” in the right-click context menu  
 
-Reorder actions
+### 📤📥 Import / Export
+- Export global actions to a file  
+- Import actions between machines or share with teammates  
 
-Move actions between categories
+### 🧱 Advanced Property Support
+Correct handling of complex Blender datatypes:
+- vectors  
+- matrices  
+- colors  
+- nested properties  
 
-Quickly switch between different setups
+---
 
-🎯 Playback & Execution Options
+## 🧩 Blender Compatibility
 
-Run an entire action with one click
+The original add-on targets **Blender 3.3.x** according to `bl_info`.  
+This fork remains aligned with the original design, with only minimal modifications.
 
-Execute individual steps inside an action
+---
 
-Control property replay logic and value restoration behavior
+## 🔧 About This Fork
 
-⌨️ Keymap & Menu Integration
+This repository:
 
-Assign shortcuts to your favorite actions
+- preserves the original architecture and logic of **ActionRecorder**  
+- applies **minor functional enhancements**  
+- includes **small bugfixes** and **quality-of-life adjustments**  
+- stays close to upstream for easy diffing and future merging  
 
-Access actions from 3D View menus and pie menus
+See the commit history for detailed changes.
 
-Optional: add “Copy to ActionRecorder” to the right-click context menu
+---
 
-📤📥 Import / Export
+## 🙌 Credits
 
-Export global actions to a file
+**Original Authors:**  
+- **InamuraJIN**  
+- **RivinHD**
 
-Import actions on another machine or share with your team
+**Fork Maintainer:**  
+- **gh0stck**
 
-🧱 Advanced Property Support
-
-Handles complex Blender properties correctly:
-
-vectors
-
-matrices
-
-colors
-
-and other non-trivial types
-
-🧩 Blender Compatibility
-
-The original add-on targets Blender 3.3.x (as indicated in bl_info).
-This fork keeps the same architecture with only minor adjustments and functional polishing.
-
-🔧 About This Fork
-
-This fork:
-
-preserves the original structure and logic of ActionRecorder
-
-applies small functional changes and minor improvements
-
-stays close to upstream to simplify future merging or comparison
-
-introduces no major redesigns or architecture changes
-
-For specifics, see the commit history.
-
-🙌 Credits
-
-Original Authors:
-
-InamuraJIN
-
-RivinHD
-
-Fork Maintainer:
-
-gh0stck
+---
