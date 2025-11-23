@@ -76,5 +76,3 @@ See the commit history for detailed changes.
 
 **Fork Maintainer:**  
 - **gh0stck**
-
----
