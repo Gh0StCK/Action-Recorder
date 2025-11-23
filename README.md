@@ -50,7 +50,7 @@ Correct handling of complex Blender datatypes:
 
 ## 🧩 Blender Compatibility
 
-The original add-on targets **Blender 5.x** according to `bl_info`.  
+The original add-on targets **Blender 5.x**.  
 This fork remains aligned with the original design, with only minimal modifications.
 
 ---
