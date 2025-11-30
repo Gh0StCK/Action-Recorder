@@ -15,7 +15,7 @@ from . import properties, functions, config, update, keymap, log, shared_data
 from .log import logger, log_sys
 
 if TYPE_CHECKING:
-    def get_preferences(): return
+    def get_preferences(): ...
 else:
     from .functions.shared import get_preferences
 # endregion
@@ -26,14 +26,24 @@ else:
 class AR_preferences(AddonPreferences):
     bl_idname = __package__.split(".")[0]
 
+    # ---------------- is_loaded ----------------
+
     def update_is_loaded(self, context: Context) -> None:
+        # триггерит обновление сцены, как в оригинале
         context.scene.name = context.scene.name
 
+    # внутреннее поле вместо IDProperties (раньше self["is_loaded"])
+    is_loaded_internal: BoolProperty(
+        name="INTERNAL RAW",
+        default=False,
+        options={'HIDDEN'}
+    )
+
     def get_is_loaded(self) -> bool:
-        return self.get("is_loaded", False) and shared_data.data_loaded
+        return self.is_loaded_internal and shared_data.data_loaded
 
     def set_is_loaded(self, value: bool) -> None:
-        self["is_loaded"] = value
+        self.is_loaded_internal = value
 
     is_loaded: BoolProperty(
         name="INTERNAL",
@@ -43,6 +53,8 @@ class AR_preferences(AddonPreferences):
         get=get_is_loaded,
         set=set_is_loaded
     )
+
+    # ---------------- базовые настройки ----------------
 
     addon_directory: StringProperty(
         name="addon directory",
@@ -68,7 +80,15 @@ class AR_preferences(AddonPreferences):
         soft_max=100
     )
 
-    # icon manager
+    # ---------------- icon_path ----------------
+
+    # внутреннее поле для пути к иконкам (раньше self["icon_path"])
+    icon_path_internal: StringProperty(
+        name="Icons Path (Internal)",
+        default=os.path.join(os.path.dirname(os.path.dirname(__file__)), "Icons"),
+        options={'HIDDEN'}
+    )
+
     def get_icon_path(self) -> str:
         """
         getter of icon_path
@@ -77,14 +97,14 @@ class AR_preferences(AddonPreferences):
         Returns:
             str: path of the folder
         """
-        origin_path = self.get('icon_path', 'Fallback')
+        origin_path = self.icon_path_internal
         if os.path.exists(origin_path):
-            return self['icon_path']
+            return origin_path
         else:
             path = os.path.join(self.addon_directory, "Icons")
-            if origin_path != 'Fallback':
-                logger.error("ActRec ERROR: Icon Path \"%s\" don't exist, fallback to %s" % (origin_path, path))
-            self['icon_path'] = path
+            if origin_path and origin_path != 'Fallback':
+                logger.error('ActRec ERROR: Icon Path "%s" does not exist, fallback to %s' % (origin_path, path))
+            self.icon_path_internal = path
             if not os.path.exists(path):
                 os.makedirs(path, exist_ok=True)
             return path
@@ -96,7 +116,7 @@ class AR_preferences(AddonPreferences):
         Args:
             origin_path (str): path of the new icon folder
         """
-        self['icon_path'] = origin_path
+        self.icon_path_internal = origin_path
         if not (os.path.exists(origin_path) and os.path.isdir(origin_path)):
             os.makedirs(origin_path, exist_ok=True)
 
@@ -117,7 +137,8 @@ class AR_preferences(AddonPreferences):
         options={'HIDDEN'}
     )
 
-    # update
+    # ---------------- update ----------------
+
     update: BoolProperty()
     restart: BoolProperty()
     version: StringProperty()
@@ -136,8 +157,17 @@ class AR_preferences(AddonPreferences):
         subtype='PERCENTAGE'
     )  # used as slider
 
-    # locals
+    # ---------------- locals ----------------
+
     local_actions: CollectionProperty(type=properties.AR_local_actions)
+
+    # внутреннее поле для индекса (вместо self['active_local_action_index'])
+    active_local_action_index_internal: IntProperty(
+        name="Select (Internal)",
+        default=0,
+        min=0,
+        options={'HIDDEN'}
+    )
 
     def get_active_local_action_index(self) -> int:
         """
@@ -146,9 +176,14 @@ class AR_preferences(AddonPreferences):
         Returns:
             int: index of the active local action
         """
-        value = self.get('active_local_action_index', 0)
+        value = self.active_local_action_index_internal
         actions_length = len(self.local_actions)
-        return value if value < actions_length else actions_length - 1
+        if actions_length <= 0:
+            return 0
+        # если индекс вышел за пределы списка — возвращаем последний
+        if value < 0 or value >= actions_length:
+            return actions_length - 1
+        return value
 
     def set_active_local_action_index(self, value: int):
         """
@@ -159,10 +194,20 @@ class AR_preferences(AddonPreferences):
             value (int): index to set
         """
         ActRec_pref = get_preferences(bpy.context)
+        # сохраняем логику: при записи макроса выбор блокируется
         if not ActRec_pref.local_record_macros:
             actions_length = len(self.local_actions)
-            value = value if value < actions_length else actions_length - 1
-            self['active_local_action_index'] = value if value >= 0 else actions_length - 1
+            if actions_length <= 0:
+                self.active_local_action_index_internal = 0
+                return
+
+            # зажимаем значение в допустимый диапазон
+            if value < 0:
+                value = 0
+            elif value >= actions_length:
+                value = actions_length - 1
+
+            self.active_local_action_index_internal = value
 
     active_local_action_index: IntProperty(
         name="Select",
@@ -170,6 +215,7 @@ class AR_preferences(AddonPreferences):
         get=get_active_local_action_index,
         set=set_active_local_action_index
     )
+
     local_to_global_mode: EnumProperty(
         name="Mode",
         items=[
@@ -194,6 +240,7 @@ class AR_preferences(AddonPreferences):
         else:
             for action in self.local_actions:
                 functions.local_action_to_text(action)
+
     hide_local_text: BoolProperty(
         name="Hide Local Action in Texteditor",
         description="Hide the Local Action in the Texteditor",
@@ -202,7 +249,8 @@ class AR_preferences(AddonPreferences):
     )
     local_create_empty: BoolProperty(default=True, name="Create Empty", description="Create Empty Macro on Error")
 
-    # macros
+    # ---------------- macros ----------------
+
     last_macro_label: StringProperty(name="last label", default="label of the last macro")
     last_macro_command: StringProperty(name="last command", default="command of the last macro")
 
@@ -216,7 +264,8 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
         default=False
     )
 
-    # globals
+    # ---------------- globals ----------------
+
     global_actions: CollectionProperty(type=properties.AR_global_actions)
 
     global_to_local_mode: EnumProperty(
@@ -235,7 +284,15 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
     import_settings: CollectionProperty(type=properties.AR_global_import_category)
     import_extension: StringProperty()
 
-    # categories
+    # ---------------- storage_path ----------------
+
+    # внутреннее поле для пути storage (вместо self["storage_path"])
+    storage_path_internal: StringProperty(
+        name="Storage Path (Internal)",
+        default=os.path.join(os.path.dirname(os.path.dirname(__file__)), "Storage.json"),
+        options={'HIDDEN'}
+    )
+
     def get_storage_path(self) -> str:
         """
         getter of storage_path
@@ -244,14 +301,20 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
         Returns:
             str: path of the storage file
         """
-        origin_path = self.get('storage_path', 'Fallback')
+        origin_path = self.storage_path_internal
         if os.path.exists(origin_path):
-            return self['storage_path']
+            return origin_path
         else:
             path = os.path.join(self.addon_directory, "Storage.json")
-            if origin_path != 'Fallback':
-                logger.error("ActRec ERROR: Storage Path \"%s\" don't exist, fallback to %s" % (origin_path, path))
-            self['storage_path'] = path
+            if origin_path and origin_path != 'Fallback':
+                logger.error(
+                    'ActRec ERROR: Storage Path "%s" does not exist, fallback to %s' % (origin_path, path)
+                )
+            self.storage_path_internal = path
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            if not os.path.exists(path):
+                with open(path, 'w') as storage_file:
+                    storage_file.write('{}')
             return path
 
     def set_storage_path(self, origin_path: str) -> None:
@@ -261,7 +324,7 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
         Args:
             origin_path (str): path of the new storage file
         """
-        self['storage_path'] = origin_path
+        self.storage_path_internal = origin_path
         if os.path.exists(origin_path) and os.path.isfile(origin_path):
             return
         os.makedirs(os.path.dirname(origin_path), exist_ok=True)
@@ -276,6 +339,8 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
         set=set_storage_path
     )
 
+    # ---------------- categories ----------------
+
     categories: CollectionProperty(type=properties.AR_category)
 
     def get_selected_category(self) -> str:
@@ -285,9 +350,15 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
         Returns:
             str: returns the id (uuid hex format) of the selected category
         """
-        return self.get("categories.selected_id", '')
+        for category in self.categories:
+            if getattr(category, 'selected', False):
+                return category.id
+        return ''
+
     selected_category: StringProperty(get=get_selected_category, default='')
     show_all_categories: BoolProperty(name="Show All Categories", default=False)
+
+    # ---------------- draw ----------------
 
     def draw(self, context: Context) -> None:
         """
