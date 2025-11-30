@@ -21,6 +21,17 @@ else:
 
 # region Functions
 
+def get_global_selected_ids() -> list[str]:
+    """Вернуть список выбранных глобальных actions из WindowManager."""
+    wm = bpy.context.window_manager
+    return list(wm.get("ar_global_actions_selected_ids", []))
+
+
+def set_global_selected_ids(ids: list[str]) -> None:
+    """Сохранить список выбранных глобальных actions в WindowManager."""
+    wm = bpy.context.window_manager
+    wm["ar_global_actions_selected_ids"] = list(ids)
+
 
 def save(ActRec_pref: AR_preferences) -> None:
     """
@@ -162,7 +173,7 @@ def get_global_action_ids(ActRec_pref: AR_preferences, id: str, index: int) -> l
     """
     id = get_global_action_id(ActRec_pref, id, index)
     if id is None:
-        return ActRec_pref.get("global_actions.selected_ids", [])
+        return get_global_selected_ids()
     return [id]
 
 

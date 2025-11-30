@@ -33,7 +33,7 @@ class AR_global_actions(shared.AR_action, PropertyGroup):
             value (bool): state of selection
         """
         ActRec_pref = get_preferences(bpy.context)
-        selected_ids = list(ActRec_pref.get("global_actions.selected_ids", []))
+        selected_ids = list(functions.get_global_selected_ids())
         # implementation similar to a UIList (only one selection of all can be active),
         # with extra multi selection by pressing ctrl
         value |= (len(selected_ids) > 1)  # used as bool or
@@ -45,7 +45,7 @@ class AR_global_actions(shared.AR_action, PropertyGroup):
         ctrl_value = bpy.ops.ar.check_ctrl('INVOKE_DEFAULT')
         # {'CANCELLED'} == ctrl is not pressed
         if selected_ids and ctrl_value == {'CANCELLED'}:
-            ActRec_pref["global_actions.selected_ids"] = []
+            functions.set_global_selected_ids([])
             for selected_id in selected_ids:
                 action = ActRec_pref.global_actions.get(selected_id, None)
                 if action is None:
@@ -53,7 +53,7 @@ class AR_global_actions(shared.AR_action, PropertyGroup):
                 action.selected = (not bool(action))
             selected_ids.clear()
         selected_ids.append(self.id)
-        ActRec_pref["global_actions.selected_ids"] = selected_ids
+        functions.set_global_selected_ids(selected_ids)
         self['selected'] = value
 
     selected: BoolProperty(

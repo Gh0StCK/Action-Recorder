@@ -1,0 +1,173 @@
+{
+  "categories": [
+    {
+      "id": "4b0a66fec84411f09977f854f6bf809b",
+      "label": "Modifier",
+      "actions": [
+        {
+          "name": "b47e251cc84211f0b968f854f6bf809b",
+          "id": "b47e251cc84211f0b968f854f6bf809b"
+        },
+        {
+          "name": "4d0ec38bc84411f0ab9df854f6bf809b",
+          "id": "4d0ec38bc84411f0ab9df854f6bf809b"
+        },
+        {
+          "name": "cdf62cc3cd1311f0b94af854f6bf809b",
+          "id": "cdf62cc3cd1311f0b94af854f6bf809b"
+        }
+      ],
+      "areas": [
+        {
+          "name": "VIEW_3D",
+          "type": "VIEW_3D",
+          "modes": [
+            {
+              "name": "OBJECT",
+              "type": "OBJECT"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "icon": 0,
+      "icon_name": "NONE",
+      "id": "b47e251cc84211f0b968f854f6bf809b",
+      "label": "Untitled",
+      "description": "Play this Action Button",
+      "macros": [
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "b97f8c75c84211f08d0af854f6bf809b",
+          "label": "Add Cube",
+          "command": "bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "b97f8c76c84211f0a8a4f854f6bf809b",
+          "label": "Add Modifier: Bevel",
+          "command": "bpy.ops.object.modifier_add(type='BEVEL')",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        }
+      ]
+    },
+    {
+      "icon": 0,
+      "icon_name": "NONE",
+      "id": "4d0ec38bc84411f0ab9df854f6bf809b",
+      "label": "Untitled",
+      "description": "Play this Action Button",
+      "macros": [
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "b97f8c75c84211f08d0af854f6bf809b",
+          "label": "Add Cube",
+          "command": "bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "b97f8c76c84211f0a8a4f854f6bf809b",
+          "label": "Add Modifier: Bevel",
+          "command": "bpy.ops.object.modifier_add(type='BEVEL')",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        }
+      ]
+    },
+    {
+      "icon": 0,
+      "icon_name": "NONE",
+      "id": "cdf62cc3cd1311f0b94af854f6bf809b",
+      "label": "Bevel_Sub",
+      "description": "Play this Action Button",
+      "macros": [
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93df98cacd1b11f0b284f854f6bf809b",
+          "label": "Add Modifier: Bevel",
+          "command": "bpy.ops.object.modifier_add(type='BEVEL')",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93dfbfbbcd1b11f0bef1f854f6bf809b",
+          "label": "width = 0.001",
+          "command": "bpy.context.object.modifiers[\"Bevel\"].width = 0.001",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93dfbfbccd1b11f098e3f854f6bf809b",
+          "label": "segments = 2",
+          "command": "bpy.context.object.modifiers[\"Bevel\"].segments = 2",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93dfbfbdcd1b11f09b58f854f6bf809b",
+          "label": "angle_limit = 1.0472",
+          "command": "bpy.context.object.modifiers[\"Bevel\"].angle_limit = 1.0472",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93dfbfbecd1b11f0b3a3f854f6bf809b",
+          "label": "Add Modifier: Subdivision Surface",
+          "command": "bpy.ops.object.modifier_add(type='SUBSURF')",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93dfbfbfcd1b11f09f7cf854f6bf809b",
+          "label": "levels = 2",
+          "command": "bpy.context.object.modifiers[\"Subdivision\"].levels = 2",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        },
+        {
+          "icon": 0,
+          "icon_name": "NONE",
+          "id": "93dfbfc0cd1b11f098eef854f6bf809b",
+          "label": "use_adaptive_subdivision = True",
+          "command": "bpy.context.object.modifiers[\"Subdivision\"].use_adaptive_subdivision = True",
+          "active": true,
+          "ui_type": "",
+          "operator_execution_context": "EXEC_DEFAULT"
+        }
+      ]
+    }
+  ]
+}

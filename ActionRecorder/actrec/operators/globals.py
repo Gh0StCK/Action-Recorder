@@ -40,7 +40,8 @@ class AR_OT_global_recategorize_action(shared.Id_based, Operator):
     @classmethod
     def poll(cls, context: Context) -> bool:
         ActRec_pref = get_preferences(context)
-        return len(ActRec_pref.global_actions) and len(ActRec_pref.get("global_actions.selected_ids", []))
+        selected_ids = functions.get_global_selected_ids()
+        return len(ActRec_pref.global_actions) and len(selected_ids)
 
     def invoke(self, context: Context, event: Event) -> set[str]:
         return context.window_manager.invoke_props_dialog(self)
@@ -570,7 +571,7 @@ class AR_OT_global_to_local(shared.Id_based, Operator):
     @ classmethod
     def poll(cls, context: Context) -> bool:
         ActRec_pref = get_preferences(context)
-        return len(ActRec_pref.global_actions) and len(ActRec_pref.get("global_actions.selected_ids", []))
+        return len(ActRec_pref.global_actions) and len(functions.get_global_selected_ids())
 
     def global_to_local(self, ActRec_pref: AR_preferences, action: AR_global_actions) -> None:
         """
@@ -615,14 +616,14 @@ class AR_OT_global_remove(shared.Id_based, Operator):
     @classmethod
     def description(cls, context: Context, properties: OperatorProperties) -> str:
         ActRec_pref = get_preferences(context)
-        ids = ActRec_pref.get("global_actions.selected_ids", [])
+        ids = functions.get_global_selected_ids()
         selected_actions_str = ", ".join(ActRec_pref.global_actions[id].label for id in ids)
         return "Remove the selected actions\nActions: %s" % (selected_actions_str)
 
     @classmethod
     def poll(cls, context: Context) -> bool:
         ActRec_pref = get_preferences(context)
-        return len(ActRec_pref.global_actions) and len(ActRec_pref.get("global_actions.selected_ids", []))
+        return len(ActRec_pref.global_actions) and len(functions.get_global_selected_ids())
 
     def invoke(self, context: Context, event: Event) -> set[str]:
         return context.window_manager.invoke_confirm(self, event)
@@ -651,7 +652,7 @@ class AR_OT_global_move_up(shared.Id_based, Operator):
     @classmethod
     def poll(cls, context: Context) -> bool:
         ActRec_pref = get_preferences(context)
-        return len(ActRec_pref.global_actions) and len(ActRec_pref.get("global_actions.selected_ids", []))
+        return len(ActRec_pref.global_actions) and len(functions.get_global_selected_ids())
 
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
@@ -677,7 +678,7 @@ class AR_OT_global_move_down(shared.Id_based, Operator):
     @classmethod
     def poll(cls, context: Context) -> bool:
         ActRec_pref = get_preferences(context)
-        return len(ActRec_pref.global_actions) and len(ActRec_pref.get("global_actions.selected_ids", []))
+        return len(ActRec_pref.global_actions) and len(functions.get_global_selected_ids())
 
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)

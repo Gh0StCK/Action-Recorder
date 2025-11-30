@@ -11,6 +11,8 @@ from .globals import (
     import_global_from_dict,
     get_global_action_id,
     get_global_action_ids,
+    get_global_selected_ids,
+    set_global_selected_ids,
     add_empty_action_keymap,
     is_action_keymap_empty,
     get_action_keymap,

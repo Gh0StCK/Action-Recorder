@@ -1,0 +1,5 @@
+INFO - 405907 - __init__.py:register - Registered Action Recorder
+INFO - 409035 - __init__.py:on_load - Start: Load ActRec Data
+INFO - 409035 - globals.py:load - load global actions
+INFO - 409037 - __init__.py:on_load - Finished: Load ActRec Data
+INFO - 507831 - __init__.py:unregister - Unregistered Action Recorder
