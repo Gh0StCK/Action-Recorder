@@ -2,7 +2,8 @@
 
 from .categories import (
     read_category_visibility,
-    get_category_id
+    get_category_id,
+    get_selected_category
 )
 
 from .globals import (

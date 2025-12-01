@@ -64,7 +64,8 @@ def category_visible(
             mode = getattr(
                 context.space_data,
                 space_mode_attribute[area_space])
-        return mode in set(mode.type for mode in area.modes)
+        res = mode in set(mode.type for mode in area.modes)
+        return res
     return False
 
 
@@ -140,8 +141,14 @@ def register_unregister_category(
                 category = get_visible_categories(ActRec_pref, context)[index]
                 layout = self.layout
                 row = layout.row()
-                row.prop(category, 'selected', text='',
-                         icon='LAYER_ACTIVE' if category.selected else 'LAYER_USED', emboss=False)
+                op = row.operator(
+                    'ar.category_make_active',
+                    text='',
+                    icon='RADIOBUT_ON' if category.selected else 'RADIOBUT_OFF',
+                    emboss=False
+                )
+                op.id = category.id
+                op.index = ActRec_pref.categories.find(category.id)
                 row.label(text=category.label)
 
             def draw(self, context: Context) -> None:

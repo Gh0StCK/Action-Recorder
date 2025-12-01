@@ -68,16 +68,16 @@ class AR_category(shared.Id_based, PropertyGroup):
             value (bool): state of category
         """
         ActRec_pref = get_preferences(bpy.context)
-        selected_id = ActRec_pref.get("categories.selected_id", "")
-        # implementation similar to a UIList (only one selection of all can be active)
+        # UIList-подобная реализация: только одна категория может быть активной
         if value:
-            ActRec_pref["categories.selected_id"] = self.id
-            self['selected'] = value
-            category = ActRec_pref.categories.get(selected_id, None)
-            if category:
-                category.selected = False
-        elif selected_id != self.id:
-            self['selected'] = value
+            self['selected'] = True
+            for category in ActRec_pref.categories:
+                if category.id != self.id and category.get('selected', False):
+                    category['selected'] = False
+        else:
+            self['selected'] = False
+        if hasattr(bpy.context, 'area') and bpy.context.area:
+            bpy.context.area.tag_redraw()
 
     label: StringProperty()
     selected: BoolProperty(description='Select this Category',

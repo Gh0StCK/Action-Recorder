@@ -676,12 +676,7 @@ class AR_OT_global_move_up(shared.Id_based, Operator):
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
         ids = set(functions.get_global_action_ids(ActRec_pref, self.id, self.index))
-        for category in ActRec_pref.categories:
-            for id_action in category.actions:
-                if id_action.id not in ids:
-                    continue
-                index = category.actions.find(id_action.id)
-                category.actions.move(index, index - 1)
+        functions.move_actions(ActRec_pref, ids, True)
         if ActRec_pref.autosave:
             functions.save(ActRec_pref)
         context.area.tag_redraw()
@@ -702,12 +697,7 @@ class AR_OT_global_move_down(shared.Id_based, Operator):
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
         ids = set(functions.get_global_action_ids(ActRec_pref, self.id, self.index))
-        for category in ActRec_pref.categories:
-            for id_action in reversed(list(category.actions)):
-                if id_action.id not in ids:
-                    continue
-                index = category.actions.find(id_action.id)
-                category.actions.move(index, index + 1)
+        functions.move_actions(ActRec_pref, ids, False)
         if ActRec_pref.autosave:
             functions.save(ActRec_pref)
         context.area.tag_redraw()

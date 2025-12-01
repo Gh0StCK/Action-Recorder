@@ -67,20 +67,8 @@ def save(ActRec_pref: AR_preferences) -> None:
         ]
     )
 
-    # ---- НАЧИНАЕТСЯ НАШ ФИКС ----
-    storage_path = ActRec_pref.storage_path or ""
-
-    # если путь пустой или папки нет – принудительно делаем нормальный путь
-    if (not storage_path) or (not os.path.isdir(os.path.dirname(storage_path))):
-        storage_path = os.path.join(ActRec_pref.addon_directory, "Storage.json")
-        # обновляем префы, чтобы дальше уже использовался правильный путь
-        ActRec_pref.storage_path = storage_path
-
-    os.makedirs(os.path.dirname(storage_path), exist_ok=True)
-
-    with open(storage_path, 'w', encoding='utf-8') as storage_file:
+    with open(ActRec_pref.storage_path, 'w', encoding='utf-8') as storage_file:
         json.dump(data, storage_file, ensure_ascii=False, indent=2)
-    # ---- КОНЕЦ ФИКСА ----
 
     logger.info('saved global actions')
 
@@ -246,3 +234,11 @@ def remove_action_keymap(id: str, km: KeyMap) -> None:
 def get_all_action_keymaps(km: KeyMap) -> Iterable[KeyMapItem]:
     return filter(lambda x: x.idname == "ar.global_execute_action", km.keymap_items)
 # endregion
+def move_actions(ActRec_pref: AR_preferences, ids: set[str], up: bool) -> None:
+    for category in ActRec_pref.categories:
+        iterable = category.actions if up else reversed(list(category.actions))
+        for id_action in iterable:
+            if id_action.id not in ids:
+                continue
+            index = category.actions.find(id_action.id)
+            category.actions.move(index, index - 1 if up else index + 1)

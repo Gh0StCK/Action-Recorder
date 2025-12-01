@@ -34,9 +34,11 @@ def get_category_id(ActRec_pref: AR_preferences, id: str, index: int) -> str:
         return id
 
     if index >= 0 and len(ActRec_pref.categories) > index:
-        return ActRec_pref.categories[index].id
+        res = ActRec_pref.categories[index].id
+        return res
     else:
-        return ActRec_pref.selected_category
+        res = ActRec_pref.selected_category
+        return res
 
 
 def read_category_visibility(ActRec_pref: AR_preferences, id: str) -> Optional[list]:
@@ -60,4 +62,9 @@ def read_category_visibility(ActRec_pref: AR_preferences, id: str) -> Optional[l
         if len(area.modes) == 0:
             visibility.append((area.type, 'all'))
     return visibility
+
+
+def get_selected_category(ActRec_pref: AR_preferences):
+    sel = ActRec_pref.selected_category
+    return ActRec_pref.categories.get(sel, None) if sel else None
 # endregion

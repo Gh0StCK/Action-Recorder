@@ -250,19 +250,10 @@ class AR_OT_category_edit(shared.Id_based, AR_OT_category_interface, Operator):
         selected_id = ActRec_pref.selected_category
         category = ActRec_pref.categories.get(selected_id, None)
 
-        return (
-            len(ActRec_pref.categories)
-            and category is not None
-            and (
-                ignore
-                or 
-                ui_functions.category_visible(
-                    ActRec_pref,
-                    context,
-                    category
-                )
-            )
-        )
+        visible = False
+        if category is not None:
+            visible = ui_functions.category_visible(ActRec_pref, context, category)
+        return len(ActRec_pref.categories) and category is not None and (ignore or visible)
 
 
     def invoke(self, context: Context, event: Event) -> set[str]:
@@ -308,6 +299,30 @@ If the category has no applied visibilities it will be shown in all available pa
         return {"FINISHED"}
 
 
+class AR_OT_category_make_active(shared.Id_based, Operator):
+    bl_idname = "ar.category_make_active"
+    bl_label = "Make Category Active"
+    bl_options = {'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        ActRec_pref = get_preferences(context)
+        return len(ActRec_pref.categories)
+
+    def execute(self, context: Context) -> set[str]:
+        ActRec_pref = get_preferences(context)
+        id = functions.get_category_id(ActRec_pref, self.id, self.index)
+        if not id:
+            return {'CANCELLED'}
+        prev = ActRec_pref.selected_category
+        for c in ActRec_pref.categories:
+            c.selected = (c.id == id)
+        now = ActRec_pref.selected_category
+        if ActRec_pref.autosave:
+            functions.save(ActRec_pref)
+        context.area.tag_redraw()
+        self.clear()
+        return {'FINISHED'}
 class AR_OT_category_delete_visibility(Operator):
     bl_idname = "ar.category_delete_visibility"
     bl_label = "Delete Visibility"
@@ -344,23 +359,10 @@ class AR_OT_category_delete(shared.Id_based, Operator):
         ignore = cls.ignore_selection
         cls.ignore_selection = False
 
-        # нет категорий – кнопка не активна
-        if not len(ActRec_pref.categories):
-            return False
-
-        selected_id = ActRec_pref.selected_category
-        if not selected_id:
-            return False
-
-        category = ActRec_pref.categories.get(selected_id, None)
+        category = functions.get_selected_category(ActRec_pref)
         if category is None:
             return False
-
-        return ignore or ui_functions.category_visible(
-            ActRec_pref,
-            context,
-            category,
-        )
+        return ignore or ui_functions.category_visible(ActRec_pref, context, category)
 
 
 
@@ -398,6 +400,10 @@ class AR_OT_category_delete(shared.Id_based, Operator):
         layout.label(text="Remove Category: %s" % (ActRec_pref.categories[id].label))
 
 
+    # удалено: дополнительный механизм выбора категории через операторы
+    # базовый выбор работает через свойство category.selected в заголовке панели
+
+
 class AR_OT_category_move_up(shared.Id_based, Operator):
     bl_idname = "ar.category_move_up"
     bl_label = "Move Up"
@@ -414,22 +420,10 @@ class AR_OT_category_move_up(shared.Id_based, Operator):
         ignore = cls.ignore_selection
         cls.ignore_selection = False
 
-        if not len(ActRec_pref.categories):
-            return False
-
-        selected_id = ActRec_pref.selected_category
-        if not selected_id:
-            return False
-
-        category = ActRec_pref.categories.get(selected_id, None)
+        category = functions.get_selected_category(ActRec_pref)
         if category is None:
             return False
-
-        return ignore or ui_functions.category_visible(
-            ActRec_pref,
-            context,
-            category,
-        )
+        return ignore or ui_functions.category_visible(ActRec_pref, context, category)
 
 
     def execute(self, context: Context) -> set[str]:
@@ -472,22 +466,10 @@ class AR_OT_category_move_down(shared.Id_based, Operator):
         ignore = cls.ignore_selection
         cls.ignore_selection = False
 
-        if not len(ActRec_pref.categories):
-            return False
-
-        selected_id = ActRec_pref.selected_category
-        if not selected_id:
-            return False
-
-        category = ActRec_pref.categories.get(selected_id, None)
+        category = functions.get_selected_category(ActRec_pref)
         if category is None:
             return False
-
-        return ignore or ui_functions.category_visible(
-            ActRec_pref,
-            context,
-            category,
-        )
+        return ignore or ui_functions.category_visible(ActRec_pref, context, category)
 
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
@@ -520,6 +502,7 @@ classes = [
     AR_OT_category_apply_visibility,
     AR_OT_category_delete_visibility,
     AR_OT_category_delete,
+    AR_OT_category_make_active,
     AR_OT_category_move_up,
     AR_OT_category_move_down
 ]
