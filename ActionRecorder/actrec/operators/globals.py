@@ -32,10 +32,18 @@ else:
 # region Operators
 
 
+class AR_recategorize_category(PropertyGroup):
+    id: StringProperty()
+    label: StringProperty()
+    use: BoolProperty(default=False, name="Use")
+
+
 class AR_OT_global_recategorize_action(shared.Id_based, Operator):
     bl_idname = "ar.global_recategorize_action"
     bl_label = "Recategorize Action Button"
     bl_description = "Reallocate the selected Action to another Category"
+
+    recat_categories: CollectionProperty(type=AR_recategorize_category)
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -44,6 +52,13 @@ class AR_OT_global_recategorize_action(shared.Id_based, Operator):
         return len(ActRec_pref.global_actions) and len(selected_ids)
 
     def invoke(self, context: Context, event: Event) -> set[str]:
+        ActRec_pref = get_preferences(context)
+        self.recat_categories.clear()
+        for category in ActRec_pref.categories:
+            new_cat = self.recat_categories.add()
+            new_cat.id = category.id
+            new_cat.label = category.label
+            new_cat.use = False
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context: Context) -> set[str]:
@@ -51,27 +66,31 @@ class AR_OT_global_recategorize_action(shared.Id_based, Operator):
         categories = ActRec_pref.categories
         ids = functions.get_global_action_ids(ActRec_pref, self.id, self.index)
         self.clear()
-        if all(category.selected for category in categories):
+        chosen_ids = {cat.id for cat in self.recat_categories if cat.use}
+        if not chosen_ids:
             return {"CANCELLED"}
         for category in categories:
-            if category.selected:
+            if category.id in chosen_ids:
                 for id in set(ids).difference(x.id for x in category.actions):
                     new_action = category.actions.add()
                     new_action.id = id
             else:
                 for id in ids:
-                    category.actions.remove(category.actions.find(id))
+                    idx = category.actions.find(id)
+                    if idx != -1:
+                        category.actions.remove(idx)
         if ActRec_pref.autosave:
             functions.save(ActRec_pref)
         context.area.tag_redraw()
         return {"FINISHED"}
 
     def draw(self, context: Context) -> None:
-        ActRec_pref = get_preferences(context)
-        categories = ActRec_pref.categories
         layout = self.layout
-        for category in categories:
-            layout.prop(category, 'selected', text=category.label)
+        col = layout.column(align=True)
+        for category in self.recat_categories:
+            row = col.row()
+            row.prop(category, 'use', text="")
+            row.label(text=category.label)
 
 
 class AR_OT_global_import(Operator, ImportHelper):
@@ -849,6 +868,7 @@ class AR_OT_global_edit(Operator):
 
 
 classes = [
+    AR_recategorize_category,
     AR_OT_global_recategorize_action,
     AR_OT_global_import,
     AR_OT_global_import_settings,
