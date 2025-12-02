@@ -138,6 +138,7 @@ class AR_OT_global_import(Operator, ImportHelper):
 
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
+        logger.info("Global Import Start: file=%s mode=%s include_keymap=%s", self.filepath, self.mode, self.include_keymap)
 
         # Try to load import settings and check if file is valid
         if (not len(ActRec_pref.import_settings)
@@ -214,6 +215,7 @@ class AR_OT_global_import(Operator, ImportHelper):
         if ActRec_pref.autosave:
             functions.save(ActRec_pref)
         context.area.tag_redraw()
+        logger.info("Global Import Finished: categories=%d actions=%d", len(ActRec_pref.categories), len(ActRec_pref.global_actions))
         return {"FINISHED"}
 
     def draw(self, context: Context) -> None:
@@ -401,6 +403,11 @@ class AR_OT_global_import_settings(Operator):
                 logger.error("selected .json file not compatible (%s)" % err)
                 self.report({'ERROR'}, "The selected file is not compatible (%s)" % self.filepath)
                 return {'CANCELLED'}
+        else:
+            logger.error("Import Settings: unsupported file extension (%s)", self.filepath)
+            if not self.from_operator:
+                self.report({'ERROR'}, "You need to select a .json or .zip file")
+            return {'CANCELLED'}
 
 
 class AR_OT_global_export(Operator, ExportHelper):
@@ -484,6 +491,7 @@ class AR_OT_global_export(Operator, ExportHelper):
 
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
+        logger.info("Global Export: file=%s include_keymap=%s", self.filepath, self.include_keymap)
         if not os.path.exists(os.path.dirname(self.filepath)):
             self.report({'ERROR', "Directory doesn't exist"})
             return {'CANCELLED'}
@@ -525,6 +533,7 @@ class AR_OT_global_export(Operator, ExportHelper):
         with open(self.filepath, 'w', encoding='utf-8') as file:
             json.dump(data, file, ensure_ascii=False, indent=2)
         self.cancel(context)
+        logger.info("Global Export Finished: categories=%d actions=%d", len(ActRec_pref.categories), len(ActRec_pref.global_actions))
         return {'FINISHED'}
 
     def cancel(self, context: Context) -> None:
@@ -565,6 +574,7 @@ class AR_OT_global_save(Operator):
     bl_description = "Save all Global Actions to the Storage"
 
     def execute(self, context: Context) -> set[str]:
+        logger.info("Save Global Actions to Storage")
         functions.save(get_preferences(context))
         return {"FINISHED"}
 
@@ -575,6 +585,7 @@ class AR_OT_global_load(Operator):
     bl_description = "Load all Actions from the Storage"
 
     def execute(self, context: Context) -> set[str]:
+        logger.info("Load Global Actions from Storage")
         ActRec_pref = get_preferences(context)
         functions.load(ActRec_pref)
         context.area.tag_redraw()

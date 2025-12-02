@@ -339,16 +339,20 @@ class AR_OT_local_load(Operator):
             return
         box = layout.box()
         texts = [txt.name for txt in bpy.data.texts]
+        has_any = False
         for text in self.texts:
             if text.name not in texts:
                 continue
             row = box.row()
             row.label(text=text.name)
             row.prop(text, 'apply', text='')
+            has_any = True
+        if not has_any:
+            box.label(text="No Local Action texts found")
 
     def execute(self, context: Context) -> set[str]:
         ActRec_pref = get_preferences(context)
-        logger.info("Load Local Actions")
+        logger.info("Load Local Actions: source=%s", self.source)
         if self.source == 'scene':
             data = json.loads(context.scene.ar.local)
             if not isinstance(data, list):
@@ -383,6 +387,7 @@ class AR_OT_local_load(Operator):
                 functions.local_action_to_text(action)
         context.area.tag_redraw()
         self.cancel(context)
+        logger.info("Load Local Actions Finished: count=%d", len(ActRec_pref.local_actions))
         return {"FINISHED"}
 
     def cancel(self, context: Context) -> None:

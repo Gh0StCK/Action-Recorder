@@ -233,6 +233,7 @@ class AR_preferences(AddonPreferences):
         Args:
             context (Context): unused
         """
+        logger.info("Hide Local Text: %s", self.hide_local_text)
         if self.hide_local_text:
             for text in bpy.data.texts:
                 if text.lines[0].body.strip().startswith("###ActRec_pref###"):
@@ -247,7 +248,15 @@ class AR_preferences(AddonPreferences):
         update=hide_show_local_in_texteditor,
         default=True
     )
-    local_create_empty: BoolProperty(default=True, name="Create Empty", description="Create Empty Macro on Error")
+    def update_local_create_empty(self, context: Context) -> None:
+        logger.info("Create Empty Macro on Error: %s", self.local_create_empty)
+
+    local_create_empty: BoolProperty(
+        default=True,
+        name="Create Empty",
+        description="Create Empty Macro on Error",
+        update=update_local_create_empty
+    )
 
     # ---------------- macros ----------------
 
@@ -273,10 +282,14 @@ Can also be installed under Preferences > Add-ons > Action Recorder > Settings""
                ("move", "Move", "Move the Action over to Global and Delete it from Local")],
         name="Mode"
     )
+    def update_autosave(self, context: Context) -> None:
+        logger.info("Autosave: %s", self.autosave)
+
     autosave: BoolProperty(
         default=True,
         name="Autosave",
-        description="automatically saves all Global Buttons to the Storage"
+        description="automatically saves all Global Buttons to the Storage",
+        update=update_autosave
     )
     global_rename: StringProperty(name="Rename", description="Rename the selected Action")
     global_hide_menu: BoolProperty(name="Hide", description="Hide the global Menu")
